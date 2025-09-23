@@ -3,3 +3,5 @@ This project will explore the design and development of a classic 2d platformer 
 The project aims to create an interactive platformer game where the character will have to avoid obstacles, collect items, and reach the goal.
 The project will be written in Python using the Pygame library. It will incorporate physics-based character movement, object collision and linear
 challenge progression. This project will culminate in an interactive playable prototype that demonstrates the core elements of 2d platformers.
+
+-Ryan Gardner, Patrick Murphy 
