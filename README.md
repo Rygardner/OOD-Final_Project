@@ -8,5 +8,5 @@
 | **Student**         | Ryan Gardner, Patrick Murphy                               |
 | **Mav Username**    | Rcgardner, Pdmurphy2                                       |
 | **GitHub Username** | Rygardner, Pdmurphy2                                       |
-| **Repository**      | https://github.com/Rygardner/OOP-Final_Project             |
+| **Repository**      | https://github.com/Rygardner/OOD-Final_Project             |
 | **Project**         | Classic 2D Platformer                                      |
