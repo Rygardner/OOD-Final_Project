@@ -6,7 +6,7 @@
 | **Section**         | 1                                                          |
 | **Semester**        | Fall 2025                                                  |
 | **Student**         | Ryan Gardner, Patrick Murphy                               |
-| **Mav Username**    | Rcgardner,                                                 |
-| **GitHub Username** | Rygardner,                                                 |
+| **Mav Username**    | Rcgardner, Pdmurphy2                                       |
+| **GitHub Username** | Rygardner, Pdmurphy2                                       |
 | **Repository**      | https://github.com/Rygardner/OOP-Final_Project             |
 | **Project**         | Classic 2D Platformer                                      |
