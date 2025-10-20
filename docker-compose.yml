@@ -1,0 +1,36 @@
+services:
+  container:
+    build:
+      context: ./ # Use the current directory as the build context
+      dockerfile: Dockerfile
+    image: final
+    hostname: ${CONTAINER_NAME}
+    container_name: final
+    environment:
+      - REPO_NAME=${REPO_NAME}
+      # pygame additions
+      - DISPLAY=${DISPLAY:-:0}
+      - WAYLAND_DISPLAY=wayland-0
+      - XDG_RUNTIME_DIR=/tmp
+      - SDL_VIDEODRIVER=x11
+      - SDL_AUDIODRIVER=dummy
+    working_dir: /home/user/${REPO_NAME}
+    volumes:
+      - ./:/home/user/${REPO_NAME}
+      - ${HOME}/.gitconfig:/home/user/.gitconfig
+      - ${HOME}/.ssh:/home/user/.ssh
+      - ${HOME}/.zsh_history:/home/user/.zsh_history
+      - ${HOME}/.kattisrc:/home/user/.kattisrc
+      # pygame additions
+      - /mnt/wslg/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg/wayland-0:/tmp/wayland-0 
+    cap_add:
+      - ALL
+    privileged: true # Grant full privileges to the container
+    ports:
+      - 8888:8888
+    command: [ "sh", "-c", "sudo chown user --recursive /home/user; zsh && tail -f /dev/null" ]
+
+networks:
+  default:
+    driver: bridge
