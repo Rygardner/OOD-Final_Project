@@ -9,18 +9,21 @@ floor, and walls.
 import pygame
 from player import Player
 
-
-# Test player
 def main() -> None:
     pygame.init()
     WIDTH, HEIGHT = 800, 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Player test")
     clock = pygame.time.Clock()
 
-    floor: int = 550
+    # Create floor, left/right wall, and a platform
+    floor_rect = pygame.Rect(0, 550, 800, 600 - 550)
     left_wall = pygame.Rect(100, 0, 20, 550)
     right_wall = pygame.Rect(680, 0, 20, 550)
-    walls: list[pygame.Rect] = [left_wall, right_wall]
+    platform = pygame.Rect(300, 400, 200, 20)
+
+    # Create a list of solids with above rects
+    solids: list[pygame.Rect] = [floor_rect, left_wall, right_wall, platform]
 
     player = Player(200, 200)
 
@@ -30,15 +33,22 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
 
+        # get player input
         keys = pygame.key.get_pressed()
-        player.update(keys, floor, walls)
+        player.update(keys, solids)
 
         screen.fill((0, 0, 0))
-        pygame.draw.rect(screen, (0, 200, 0), (0, floor, WIDTH, HEIGHT - floor))
-        for wall in walls:
-            pygame.draw.rect(screen, (200, 0, 0), wall)
+
+        # draw rects
+        pygame.draw.rect(screen, (0, 200, 0), floor_rect)
+        pygame.draw.rect(screen, (200, 0, 0), left_wall)
+        pygame.draw.rect(screen, (200, 0, 0), right_wall)
+        pygame.draw.rect(screen, (0, 0, 200), platform)
+
+        # draw player
         player.draw(screen)
 
+        # update screen
         pygame.display.flip()
         clock.tick(60)
 
