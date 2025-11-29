@@ -6,6 +6,8 @@ Player class that the user interacts with to move around the level
 from __future__ import annotations
 import pygame
 
+from movement_strategy import MovementStrategy, NormalMovement
+
 
 class Player:
     """Player object that handles input, moves, applies gravity, handle collision for player
@@ -24,7 +26,8 @@ class Player:
         "__can_wall_jump", 
         "__touching_left_wall", 
         "__touching_right_wall",
-        "rect"
+        "__rect",
+        "__movement_strategy"
     )
 
     def __init__(self, x: int = 0, y: int = 0, 
@@ -46,12 +49,10 @@ class Player:
             jump_speed (float): = Player's jump speed
             fall_speed (float): = Player's fall speed
             wall_bounce_speed (float): = Player's wall bounce speed
-
-
         """
 
         # Player's coords, size, and color
-        self.rect: pygame.Rect = pygame.Rect(x, y, *rec_size)
+        self.__rect: pygame.Rect = pygame.Rect(x, y, *rec_size)
         self.color = chosen_color
 
         # Player's speeds
@@ -69,46 +70,101 @@ class Player:
         self.touching_left_wall: bool = False
         self.touching_right_wall: bool = False
 
+        # Strategy patter: movement behavior
+        self.__movement_strategy: MovementStrategy = NormalMovement()
+
 # ********* Setters/Getters **************
+    @property
+    def rect(self) -> pygame.Rect:
+        """Getter for Player's rect object
+        
+        Returns
+            pygame.Rect: Player's Rect object
+        """
+        return self.__rect
+
+    @rect.setter
+    def rect(self, new_rect: pygame.Rect) -> None:
+        """Setter for Player's Rect object
+        
+        Args
+            new_rect (pygame.Rect): A new Rect object change Player to
+        """
+        if not isinstance(new_rect, pygame.Rect):
+            raise TypeError("Player's rect must be a pygame.Rect object")
+        self.__rect = new_rect
 
     @property
     def x(self) -> int:
-        return self.rect.x
+        """Getter for player's x position
+        
+        Returns
+            int: Player's x coordinate
+        """
+        return self.__rect.x
 
     @x.setter
     def x(self, value: int) -> None:
+        """Setter for player's x position
+        
+        Args
+            value (int): Player's x coordinate position
+        """
         if not isinstance(value, int):
             raise TypeError("x must be an int")
-        self.rect.x = value
+        self.__rect.x = value
 
     @property
     def y(self) -> int:
-        return self.rect.y
+        """Getter for player's y position
+        
+        Returns
+            int: Player's y coordinate
+        """
+        return self.__rect.y
 
     @y.setter
     def y(self, value: int) -> None:
+        """Setter for players y position
+        
+        Args
+            value (int): Player's y coordinate position
+        """
         if not isinstance(value, int):
             raise TypeError("y must be an int")
-        self.rect.y = value
+        self.__rect.y = value
 
     @property
     def size(self) -> tuple[int, int]:
-        return self.rect.size
+        """Getter for players size
+        
+        Returns
+            tuple[int, int]: Players size as a tuple of 2 ints: (heights, width)
+        """
+        return self.__rect.size
     
     @size.setter
-    def size(self, value: tuple[int, int]) -> None:
+    def size(self, new_size: tuple[int, int]) -> None:
+        """Setter for Player's size
+        
+        Args
+            new_size (tuple[int, int]): Players new size: (height, width)
+        """
         if (
-            not isinstance(value, tuple)
-            or len(value) != 2
-            or not all(isinstance(v, int) and v > 0 for v in value)
+            not isinstance(new_size, tuple)
+            or len(new_size) != 2
+            or not all(isinstance(v, int) and v > 0 for v in new_size)
         ):
             raise TypeError("size must be a tuple of two positive ints (width, height)")
 
-        self.rect.size = value
+        self.__rect.size = new_size
     
     @property
     def color(self) -> tuple[int]:
         """Getter for player's color
+
+        Returns
+            tuple[int]: A tuple of 3 ints that represent RGB
         """
         return self.__color
     
@@ -117,6 +173,11 @@ class Player:
         """Setter for player's color. Supports either a tuple with 3 ints
         that represent RGB or a string with a generic colors: red, green, blue,
         white, black, or yellow.
+
+        Args
+            chosen_color
+                (str): A color name such as red, green, blue, white, black, or yellow
+                (tuple[int]) A tuple of 3 ints that represent RGB
         """
         color_dict = {
             "red":   (255, 0, 0),
@@ -129,7 +190,7 @@ class Player:
 
         if isinstance(chosen_color, str):
             if chosen_color.lower() not in self.color_dict:
-                raise ValueError("chosen_color name is unknown")
+                raise ValueError("chosen_color name is NOT in color_dict")
             self.__color = color_dict[chosen_color.lower()]
 
         elif not isinstance(chosen_color, tuple) or len(chosen_color) != 3:
@@ -139,12 +200,18 @@ class Player:
     @property
     def move_speed(self) -> int:
         """Getter for player's move speed
+
+        Returns
+            int: Player's horizontal speed
         """
         return self.__move_speed
     
     @move_speed.setter
     def move_speed(self, speed: int) -> None:
         """Setter for player's move speed
+
+        Args
+            speed (int): Player's horizontal speed
         """
         if not isinstance(speed, int):
             raise TypeError("Player's move_speed must be an int")
@@ -154,12 +221,18 @@ class Player:
     @property
     def jump_speed(self) -> float:
         """Getter for player's jump speed
+
+        Returns
+            float: Player's jump speed
         """
         return self.__jump_speed
     
     @jump_speed.setter
     def jump_speed(self, speed: float) -> None:
         """Setter for player's jump speed
+
+        Args
+            speed (float): Player's jump speed
         """
         if not isinstance(speed, float):
             raise TypeError("Player's jump_speeed must be a float")
@@ -168,12 +241,18 @@ class Player:
     @property
     def fall_speed(self) -> float:
         """Getter for player's fall speed
+
+        Returns
+            float: Player's fall speed
         """
         return self.__fall_speed
     
     @fall_speed.setter
     def fall_speed(self, gravity: float) -> None:
         """Setter for player's fall speed
+
+        Args
+            gravity (float): Player's fall speed
         """
         if not isinstance(gravity, float):
             raise TypeError("Player's fall_speed must be a float")
@@ -183,12 +262,18 @@ class Player:
     @property
     def wall_jump_speed(self) -> float:
         """Getter for player's wall jump speed
+
+        Returns
+            float: Player's wall jump speed
         """
         return self.__wall_jump_speed
     
     @wall_jump_speed.setter
     def wall_jump_speed(self, speed: float) -> None:
         """Setter for player's wall jump speed
+
+        Args
+            speed (float): Players wall jump speed
         """
         if not isinstance(speed, float):
             raise TypeError("Player's wall_jump_speed must be a float")
@@ -198,12 +283,18 @@ class Player:
     @property 
     def jump_velocity(self) -> float:
         """Getter for player's jump velocity
+
+        Returns
+            float: Player's vertical velocity
         """
         return self.__jump_velocity
     
     @jump_velocity.setter
     def jump_velocity(self, velocity: float) -> None:
         """Setter for player's jump velocity
+
+        Args
+            velocity (float): Player's vertical velocity
         """
         if not isinstance(velocity, float):
             raise TypeError("Player's jump_velocity must be a float")
@@ -213,12 +304,18 @@ class Player:
     @property
     def on_ground(self) -> bool:
         """Getter for on ground flag
+
+        Returns
+            bool: Is the player touching the ground?
         """
         return self.__on_ground
     
     @on_ground.setter
     def on_ground(self, is_on_ground: bool) -> None:
-        """Setter for on ground flag
+        """Setter for is player on the ground flag
+
+        Args
+            is_on_ground (bool): Is player touching the ground? True/False
         """
         if not isinstance(is_on_ground, bool):
             raise TypeError("Player's is on ground flag must be a bool")
@@ -227,12 +324,18 @@ class Player:
     @property
     def can_wall_jump(self) -> bool:
         """Getter for player's can wall jump flag
+
+        Returns
+            bool: Player can wall jump
         """
         return self.__can_wall_jump
     
     @can_wall_jump.setter
     def can_wall_jump(self, flag: bool) -> None:
         """Setter for player's can wall jump flag
+
+        Args
+            flag (bool): Can player wall jump? True/False
         """
         if not isinstance(flag, bool):
             raise TypeError("Player's can wall jump flag must be a bool")
@@ -240,13 +343,19 @@ class Player:
         
     @property
     def touching_left_wall(self) -> bool:
-        """Getter for player's touching left wall flag
+        """Getter for player's touching a wall on their left side
+
+        Returns
+            bool: Player is touching a wall on their left side
         """
         return self.__touching_left_wall
     
     @touching_left_wall.setter
     def touching_left_wall(self, flag: bool) -> None:
-        """Setter for player's touching left wall flag
+        """Setter for player's touching a wall on their left side flag
+
+        Args
+            flag (bool): Player is touching a wall on their left side
         """
         if not isinstance(flag, bool):
             raise TypeError("Player's touching_left_wall flag must be a bool")
@@ -254,32 +363,61 @@ class Player:
         
     @property
     def touching_right_wall(self) -> bool:
-        """Getter for player's touching right wall flag
+        """Getter for player's touching wall on their right side flag
+
+        Returns
+            bool: True/False if player is touching a wall on their right side
         """
         return self.__touching_right_wall
     
     @touching_right_wall.setter
     def touching_right_wall(self, flag: bool) -> None:
-        """Setter for player's touching right wall flag
+        """Setter for player's touching wall on their right side flag
+
+        Args
+            flag (bool): True/False if player is touching a wall on their right side
         """
         if not isinstance(flag, bool):
             raise TypeError("Player's touching_right_wall flag must be a bool")
         self.__touching_right_wall = flag
 
+    @property
+    def movement_strategy(self) -> MovementStrategy:
+        """Getter for movement strategy
+        
+        Returns
+            MovementStrategy: Returns a MovementStrategy
+        """
+        return self.__movement_strategy
+
+    @movement_strategy.setter
+    def movement_strategy(self, strategy: MovementStrategy) -> None:
+        """Setter for movement strategy
+        
+        Args
+            strategy (MovementStrategy): A movement strategy for the player
+        """
+        if not isinstance(strategy, MovementStrategy):
+            raise TypeError("strategy needs to be a MovementStrategy object")
+        
+        self.__movement_strategy = strategy
+
+
 #************** Movement / Physics ******************
 
     def horizontal_movement(self, keys: pygame.key.ScancodeWrapper) -> int:
-        """Handles Horizontal movement input
+        """Handles Horizontal (player.x) movement
+
+        Args
+            keys (pygame.key.ScancodeWrapper): Keyboard input
         """
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            return -self.move_speed
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            return self.move_speed
-        
-        return 0
+        return self.movement_strategy.get_horizontal_velocity(self.move_speed, keys)
         
     def handle_horizontal_collisions(self, colliders: list[pygame.Rect], horizontal_velocity: int,) -> None:
         """Handles horzontal collisions
+
+        Args
+            colliders (list[pygame.Rect]): List of walls or anything the player should collide horizontally with
         """
         self.touching_left_wall = False
         self.touching_right_wall = False
@@ -315,6 +453,10 @@ class Player:
         """Handles vertical collision. So capable of landing on a floor/platform. Also
         handles collision for when the player jumps and collides with a platform from
         underneath.
+
+        Args:
+            colliders (list[pygame.Rect]): List of platforms, floor, or anything the player should
+                                           vertically collide with.
         """
         self.on_ground = False
 
@@ -332,6 +474,10 @@ class Player:
     def reposition(self, x: int, y: int) -> None:
         """Move the player to a new (x, y) area. Could use for spawning/respawning
         or teleport the player to set location. Resets jump_velocity and flags
+
+        Args:
+            x (int): player's new x position
+            y (int): player's new y position
         """
         if not isinstance(x, int) or not isinstance(y, int):
             raise TypeError("spawn coordinates must be ints")
@@ -347,6 +493,11 @@ class Player:
 
     def update(self, keys: pygame.key.ScancodeWrapper, colliders: list[pygame.Rect]) -> None:
         """Updates player's loop in game 
+
+        Args
+            keys (pygame.key.ScancodeWrapper): Keyboard input
+            colliders (list[pygame.Rect]): List of wall, platforms, or anything the player can
+                                           collide with
         """
         horizontal_velocity = self.horizontal_movement(keys)
         self.x += horizontal_velocity
@@ -361,6 +512,9 @@ class Player:
 
     def draw(self, surface: pygame.Surface) -> None:
         """Draw player onto pygame screen/surface
+
+        Args:
+            surface (pygame.Surface): The window/surface to draw the player on
         """
         pygame.draw.rect(surface, self.color, self.rect)
 
