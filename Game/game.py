@@ -79,8 +79,8 @@ class game:
         self.objects = new_level_objects
 
         self.start_pos = new_start_pos
-        self.player.x(self.start_pos[0])
-        self.player.y(self.start_pos[1])
+        self.player.x = self.start_pos[0]
+        self.player.y = self.start_pos[1]
 
         self.goal_pos  = new_goal_pos
         self.goal.x = self.goal_pos[0]
@@ -109,22 +109,27 @@ class game:
             returns true if level is selected
             returns false for exit to main menu
         """
+        first_loop = True
         self.level = 0
-        # mouse_pos = pygame.mouse.get_pos()
-        # mouse_clicked = pygame.mouse.get_pressed()[0]
-        buttons = Level_Objects.level_select_buttons.level_select_buttons
-
+        #mouse_pos = pygame.mouse.get_pos()
+        #mouse_clicked = pygame.mouse.get_pressed()[0]
+        buttons = Level_Objects.level_select_buttons
+        print("level select______________")
+        for objects in buttons:
+            print(objects.color)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
+
             self.screen.fill(WHITE)
-            for index , button_object in enumerate(buttons):
-                button_object.draw_button(self.screen)
-                if button_object.button_clicked() :
-                    if index == 6: # exit to main menu 
-                        return False
-                    return self.level_changer(index+1)
+            if not first_loop:
+                for index , button_object in enumerate(buttons):
+                    button_object.draw_button(self.screen)
+                    if button_object.button_clicked() :
+                        if index == 6: # exit to main menu 
+                            return False
+                        return self.level_changer(index+1)
             
             pygame.display.flip()
             self.clock.tick(60)
@@ -210,11 +215,11 @@ class game:
             it returns an int value according to the option selected
             0 = quit , 1 = level selct 
         """
-        ls_rect   = pygame.Rect(161, 161, 48, 160)  # level select
-        exit_rect = pygame.Rect(161, 401, 48, 160)  # exit
+        ls_rect   = pygame.Rect(161, 161, 480, 160)  # level select
+        exit_rect = pygame.Rect(161, 401, 480, 160)  # exit
 
-        #button_ls   = button(ls_rect  , "Level Select", BLACK , GRAY , 36)
-        #sbutton_exit = button(exit_rect, "Exit"        , BLACK , RED  , 36)
+        button_ls   = button(ls_rect  , "Level Select", BLACK , GRAY , 36)
+        button_exit = button(exit_rect, "Exit"        , BLACK , RED  , 36)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -222,13 +227,13 @@ class game:
 
             self.screen.fill(WHITE)
     
-            # button_ls.draw_button(self.screen)
-            # button_exit.draw_button(self.screen)
+            button_ls.draw_button(self.screen)
+            button_exit.draw_button(self.screen)
 
-            #if button_ls.button_clicked():
-            #    return 1
-            #elif button_exit.button_clicked():
-            #    return 0
+            if button_ls.button_clicked():
+                return 1
+            elif button_exit.button_clicked():
+                return 0
 
             pygame.display.flip()
             self.clock.tick(60)   
@@ -265,30 +270,8 @@ class game:
             elif option == 5:
                 self.level_changer(self.level)
                 option = self.Game_play() + 2
-        
-def pygame_test():
-    pygame.init()
-    SCREENWIDTH = 800
-    SCREENHEIGHT = 800
-    RED = (255,0,0)
-    screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
-
-    pygame.draw.rect(screen, RED, (400, 400, 20, 20),0)
-    screen.fill(RED)
-
-    pygame.display.update()
-
-    # waint until user quits
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-    pygame.quit()
 
 def main() -> None:
-    pygame_test()
     try:
         game_manager = game()
         game_manager.manager()
