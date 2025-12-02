@@ -1,13 +1,14 @@
 """player_test.py
 
-A small pygame window to test player object. Has a floor y position so player 
-doesn't go lower than the floor position set. Has a left wall and right wall to 
+A small pygame window to test player object. Has a floor y position so player
+doesn't go lower than the floor position set. Has a left wall and right wall to
 test player wall bounce if it works. Player update takes in keys (keys pressed),
-floor, and walls. 
+floor, and walls.
 """
 
 import pygame
 from player import Player
+
 
 def main() -> None:
     pygame.init()
