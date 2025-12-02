@@ -1,38 +1,49 @@
 """
-    This module has the button class
+    This holds the pygame.rect objects to be used during levels
 """
+import sys
 import pygame
 
-class button:
-    """
-        a button object and its functions
-    """
+sys.path.append('/Game')
+from button import button
 
-    def __init__(self , rect , text , text_color , color , size) -> None:
-        print("button created")
-        pygame.font.init()
-        self.font = pygame.font.Font(None, size)
-        self.rect = rect
-        self.text = text
-        self.text_color = text_color
-        self.color = color
+WHITE   = (255 , 255 , 255)
+BLACK   = (0   , 0   , 0)
+GRAY    = (112 , 112 , 112)
 
-    def draw_button(self , surface) -> None:
-        """
-            draws button on screen with text
-        """
-        pygame.draw.rect(surface, self.color, self.rect, border_radius=8)
-        
-        # Render text centered in the rect
-        label = self.font.render(self.text, True, self.text_color)
-        label_rect = label.get_rect(center=self.rect.center)
-        surface.blit(label, label_rect)
+RED     = (255 , 0   , 0)
+BLUE    = (0   , 0   , 255)
+GREEN   = (0   , 255 , 0)
 
-    def button_clicked(self) -> bool:
-        # If no display surface exists yet, skip mouse logic
-        if pygame.display.get_surface() is None:
-            return False
 
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()[0]
-        return self.rect.collidepoint(mouse_pos) and mouse_pressed
+# pygame.Rect(left, top, width, height)
+level_1_objects = [  # FIX ME :: contains all the objects in level one
+    pygame.Rect(0, 620, 800, 180)  # creates a floor at pxl hight 620
+]
+level_1_start_pos = [400 , 400]
+level_1_goal_pos = [200 , 200]
+
+level_select_rects = [  # contains the rects of the level slect buttons
+    pygame.Rect(81, 161, 160, 160),  # level 1
+    pygame.Rect(321, 161, 160, 160),  # level 2
+    pygame.Rect(561, 161, 160, 160),  # level 3
+    
+    pygame.Rect(81, 401, 160, 160),  # level 4
+    pygame.Rect(321, 401, 160, 160),  # level 5
+    pygame.Rect(561, 401, 160, 160),  # level 6
+
+    pygame.Rect(681, 42 , 80, 80)  # exit button    
+]
+
+level_select_buttons = [
+    button(level_select_rects[0] , "1" , BLACK , GRAY , 36), 
+    button(level_select_rects[1] , "2" , BLACK , GRAY , 36),
+    button(level_select_rects[2] , "3" , BLACK , GRAY , 36),
+    
+    button(level_select_rects[3] , "4" , BLACK , GRAY , 36),
+    button(level_select_rects[4] , "5" , BLACK , GRAY , 36),
+    button(level_select_rects[5] , "6" , BLACK , GRAY , 36),
+    
+    button(level_select_rects[6] , "X" , BLACK , RED , 36)
+]
+
