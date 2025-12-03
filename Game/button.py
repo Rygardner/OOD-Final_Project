@@ -9,7 +9,6 @@ class button:
     """
 
     def __init__(self , rect , text , text_color , color , size) -> None:
-        print("button created")
         pygame.font.init()
         self.font = pygame.font.Font(None, size)
         self.rect = rect

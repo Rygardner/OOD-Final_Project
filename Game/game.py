@@ -31,7 +31,6 @@ class game:
         return cls._instance
 
     def __init__(self):
-        print("INIT CALLED")
         if game._initialized:
             return  # <-- PREVENTS double init safely
         game._initialized = True
@@ -44,17 +43,18 @@ class game:
         self.goal_pos = [0 , 0]
         self.goal = pygame.Rect(self.goal_pos[0], self.goal_pos[1], 80, 80)
 
+        self.floor = pygame.Rect(-800, 900, 2400, 80)  # floor object to prevent forever falling
+
         self.pygame_init()
     
     def pygame_init(self) -> None:
         """
             This function initializes the pygame window
         """
-        print("Test1")
         pygame.init()
         pygame.display.init()
         pygame.font.init()
-        WIDTH, HEIGHT = 800, 600
+        WIDTH, HEIGHT = 800, 800
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("2D platformer")
         self.clock = pygame.time.Clock()
@@ -62,7 +62,6 @@ class game:
         self.screen.fill((50,50,50))
         pygame.display.flip()
         pygame.time.delay(200)
-        print("Test1.1")
 
     def quit(self):
         """
@@ -74,8 +73,7 @@ class game:
     def level_setup(self , new_level_objects , new_start_pos , new_goal_pos) -> None:
         """
             Sets up the level for play
-        """        
-
+        """    
         self.objects = new_level_objects
 
         self.start_pos = new_start_pos
@@ -91,19 +89,51 @@ class game:
             This function is called when a new level is selected
             returns a True if level is selected, False if not
         """
-        match new_level: #FIX ME :: add the rest of the levels and text
+        match new_level:
             case 1:
                 new_level_objects = Level_Objects.level_1_objects
                 new_start_pos = Level_Objects.level_1_start_pos
                 new_goal_pos = Level_Objects.level_1_goal_pos
                 self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+            
+            case 2:
+                new_level_objects = Level_Objects.level_2_objects
+                new_start_pos = Level_Objects.level_2_start_pos
+                new_goal_pos = Level_Objects.level_2_goal_pos
+                self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+
+            case 3:
+                new_level_objects = Level_Objects.level_3_objects
+                new_start_pos = Level_Objects.level_3_start_pos
+                new_goal_pos = Level_Objects.level_3_goal_pos
+                self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+                
+            case 4:
+                new_level_objects = Level_Objects.level_4_objects
+                new_start_pos = Level_Objects.level_4_start_pos
+                new_goal_pos = Level_Objects.level_4_goal_pos
+                self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+                
+            case 5:
+                new_level_objects = Level_Objects.level_5_objects
+                new_start_pos = Level_Objects.level_5_start_pos
+                new_goal_pos = Level_Objects.level_5_goal_pos
+                self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+                
+            case 6:
+                new_level_objects = Level_Objects.level_6_objects
+                new_start_pos = Level_Objects.level_6_start_pos
+                new_goal_pos = Level_Objects.level_6_goal_pos
+                self.level_setup(new_level_objects , new_start_pos , new_goal_pos)
+
 
             case _:  # should only happen if exiting to main menu
                 return False
         self.level = new_level
+        self.player.jump_velocity = 0.0  # fixes error if player leaves map
         return True
 
-    def level_select(self) -> bool:
+    def level_select(self) -> bool:  
         """
             creates a Level selection menu
             returns true if level is selected
@@ -111,26 +141,28 @@ class game:
         """
         first_loop = True
         self.level = 0
-        #mouse_pos = pygame.mouse.get_pos()
-        #mouse_clicked = pygame.mouse.get_pressed()[0]
         buttons = Level_Objects.level_select_buttons
-        print("level select______________")
-        for objects in buttons:
-            print(objects.color)
+        mouse_up_at_start = False
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
+                # makes sure the mouse is released before starting level slect
+                if event.type == pygame.MOUSEBUTTONUP: 
+                    if event.type == 1026:
+                        mouse_up_at_start = True
 
             self.screen.fill(WHITE)
-            if not first_loop:
+
+            if not first_loop and mouse_up_at_start:
                 for index , button_object in enumerate(buttons):
                     button_object.draw_button(self.screen)
                     if button_object.button_clicked() :
                         if index == 6: # exit to main menu 
                             return False
                         return self.level_changer(index+1)
-            
+            else:
+                first_loop = False
             pygame.display.flip()
             self.clock.tick(60)
 
@@ -140,31 +172,34 @@ class game:
             one display for faild and 1 for win
             returns 0 = next level, 1 = level select, 2 = main menu, 3 = retry
         """
-
         option_1 = pygame.Rect(81,  241, 160, 160)  # option 1
         option_2 = pygame.Rect(321, 241, 160, 160)  # option 2
         option_3 = pygame.Rect(561, 241, 160, 160)  # option 3
 
         if win:  # creates button for next level
-            button_1 = button(option_1, "Next\nLevel", BLACK , GRAY , 36)
+            button_1 = button(option_1, "Next Level", BLACK , GRAY , 36)
         else:  #creates button for retry level
-            button_1 = button(option_1, "Retry\nLevel", BLACK , GRAY , 36)
+            button_1 = button(option_1, "Retry Level", BLACK , GRAY , 36)
 
-        button_2 = button(option_2, "Select\nLevel", BLACK , GRAY , 36)
-        button_3 = button(option_3, "Main\nMenu", BLACK , GRAY , 36)
+        button_2 = button(option_2, "Select Level", BLACK , GRAY , 36)
+        button_3 = button(option_3, "Main Menu", BLACK , GRAY , 36)
         text_options = [button_1 , button_2 , button_3]
-
+        first_loop = True
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
             self.screen.fill(WHITE)
-            for index , buttons in enumerate(text_options):
-                buttons.draw_button(self.screen)
-                if buttons.button_clicked():
-                    if not win and index == 0:
-                        return 3 # retuns 3 for retry level
-                    return index
+            if not first_loop: 
+                for index , buttons in enumerate(text_options):
+                    buttons.draw_button(self.screen)
+                    if buttons.button_clicked():
+                        if not win and index == 0:
+                            return 3 # retuns 3 for retry level
+                        return index
+            pygame.display.flip()
+            self.clock.tick(60)
+            first_loop = False
 
     def draw_platforms(self) -> None:
         """
@@ -186,9 +221,12 @@ class game:
                 if event.type == pygame.QUIT:
                     running = False
             
-            if self.player.rect.colliderect(self.goal):
+            if self.player.rect.colliderect(self.goal): # detects a win
                 running = False
                 win = True
+            if self.player.rect.colliderect(self.floor):
+                running = False
+                win = False
 
             # get player input
             keys = pygame.key.get_pressed()
@@ -244,7 +282,6 @@ class game:
         """
         option = self.main_menu()
         while True: # loops untill player decieds to exit
-            print("Looping manger")
             # exit
             if option == 0:  
                 self.quit()
