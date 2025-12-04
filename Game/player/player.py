@@ -8,6 +8,8 @@ import pygame
 
 from movement_strategy import MovementStrategy, NormalMovement
 
+from player.movement_strategy import MovementStrategy, NormalMovement
+
 
 class Player:
     """Player object that handles input, moves, applies gravity, handle collision for player

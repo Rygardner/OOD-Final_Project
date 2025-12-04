@@ -102,4 +102,3 @@ level_select_buttons = [
     
     button(level_select_rects[6] , "X" , BLACK , RED , 36)
 ]
-
