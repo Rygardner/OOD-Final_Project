@@ -316,5 +316,5 @@ def main() -> None:
         print("CRASH:", e)
     
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma no cover
     main()

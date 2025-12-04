@@ -4,7 +4,7 @@ STYLE = flake8
 FIX_STYLE = autopep8
 TEST = pytest
 DOCS = docs
-ASSIGNMENTS = statistics.py kattisabstract.py kattismanager.py kattisreader.py kattissolver.py
+ASSIGNMENTS = 
 
 .PHONY: all
 all: check-type fix-style check-style run-test run-kat-test clean

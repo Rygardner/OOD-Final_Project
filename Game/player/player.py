@@ -6,7 +6,6 @@ Player class that the user interacts with to move around the level
 from __future__ import annotations
 import pygame
 
-from movement_strategy import MovementStrategy, NormalMovement
 
 from player.movement_strategy import MovementStrategy, NormalMovement
 
@@ -403,6 +402,8 @@ class Player:
             raise TypeError("strategy needs to be a MovementStrategy object")
 
         self.__movement_strategy = strategy
+
+# *********** Player Movement & Physics ****************************
 
     def horizontal_movement(self, keys: pygame.key.ScancodeWrapper) -> int:
         """Handles Horizontal (player.x) movement
