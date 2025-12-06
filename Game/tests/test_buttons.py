@@ -5,7 +5,6 @@ Tests for button.py
 
 import unittest
 from unittest.mock import patch
-from typing import Any
 import pygame
 
 from button import button
@@ -20,7 +19,7 @@ class TestButton(unittest.TestCase):
 
     def tearDown(self):
         return super().tearDown()
-    
+
     def test_init(self):
         """Button initializes with correct inputs
         """
@@ -45,7 +44,7 @@ class TestButton(unittest.TestCase):
             patch("pygame.mouse.get_pressed", return_value=(1, 0, 0))  # (left, middle, right)
         ):
             self.assertTrue(test_button.button_clicked())
-    
+
     def test_button_clicked_false_no_display(self):
         """button_clicked returns False when no display surface exists
         """
@@ -79,4 +78,8 @@ class TestButton(unittest.TestCase):
         with patch("pygame.draw.rect") as mock_rect:
             test_button.draw_button(surface)
 
-        mock_rect.assert_called_once_with(surface, test_button.color, test_button.rect, border_radius=8)
+        mock_rect.assert_called_once_with(
+            surface,
+            test_button.color,
+            test_button.rect,
+            border_radius=8)

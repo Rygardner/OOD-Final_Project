@@ -6,8 +6,7 @@ Player class that the user interacts with to move around the level
 from __future__ import annotations
 import pygame
 
-
-from player.movement_strategy import MovementStrategy, NormalMovement
+from movement_strategy import MovementStrategy, NormalMovement
 
 
 class Player:

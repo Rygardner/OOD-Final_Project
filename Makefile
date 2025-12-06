@@ -11,20 +11,20 @@ all: check-style check-type run-test-coverage clean
 
 .PHONY: check-type
 check-type:
-	@echo "FIXME"
+	$(TYPE_CHECK) Game/
 
 .PHONY: check-style
 check-style:
-	@echo "FIXME"
+	$(STYLE_CHECK) Game/
 
 # discover and run all tests
 .PHONY: run-test
 run-test:
-	@echo "FIXME"
+	$(TEST) $(TEST_ARGS) Game/
 
 .PHONY: run-test-coverage
 run-test-coverage:
-	@echo "FIXME"
+	$(COVERAGE) -v --cov-report=term-missing --cov=Game Game/tests
 
 .PHONY: clean
 clean:

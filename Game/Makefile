@@ -1,16 +1,62 @@
-# Makefile
+INTERPRETER = python
+TYPE = mypy
+STYLE = flake8
+FIX_STYLE = autopep8
+TEST = pytest
+DOCS = docs
+ASSIGNMENTS = game.py button.py player/player.py player/movement_strategy.py Levels/Level_Objects.py
 
-PYTHON := python3
-MAIN := game.py
-TEST := player/player_demo.py
+.PHONY: all
+all: check-type fix-style check-style run-test clean
+	@echo "All done..."
 
-.PHONY: run test clean
+.PHONY: check-type
+check-type:
+	@echo "Checking type using mypy..."
+	$(TYPE) --strict --allow-untyped-decorators --ignore-missing-imports .
 
-run:
-	$(PYTHON) $(MAIN)
+.PHONY: check-style
+check-style:
+	@echo "Checking style..."
+	$(STYLE) .
 
-test:
-	$(PYTHON) $(TEST)
+.PHONY: fix-style
+fix-style:
+	@echo "Fixing style..."
+	$(FIX_STYLE) -r --in-place --aggressive .
 
+.PHONY: clean
 clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} +
+	rm -rf 'find . -type d -name __pycache__'
+
+.PHONY: create-doc-folder
+create-doc-folder:
+	@mkdir -p $(DOCS) 
+
+.PHONY: run-test
+run-test:
+	@echo "Running $(TEST)..."
+	$(TEST) --verbose --color=yes tests/
+
+.PHONY: run-kat-test
+run-kat-test:
+	@echo "Running kattis test..."
+	kattis test
+
+.PHONY: run-all-tests
+run-all-tests: run-test run-kat-test
+	@echo "Running pytest, coverage test, and Kattis tests"
+	
+.PHONY: run-test-coverage
+run-test-coverage:
+	pytest --verbose --cov=. --cov-report=term-missing tests/
+	@echo "Running pytest coverage...."
+
+.PHONY: create-pdoc
+create-pdoc:
+	pdoc $(ASSIGNMENTS) -o docs
+
+.PHONY: play
+play:
+	@echo "Running play..."
+	python game.py
