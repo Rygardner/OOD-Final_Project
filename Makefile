@@ -34,3 +34,7 @@ clean:
 	rm -rf `find . -type d -name .mypy_cache` # remove all mypy cache
 	rm -rf `find . -type d -name .hypothesis` # remove all hypothesis cache
 	rm -rf `find . -name .coverage` # remove all coverage cache 
+
+.PHONY: play
+play:
+	python Game/game.py
