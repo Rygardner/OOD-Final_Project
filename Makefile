@@ -4,7 +4,7 @@ TYPE_CHECK = mypy --strict --allow-untyped-decorators --ignore-missing-imports
 STYLE_CHECK = flake8
 COVERAGE = python -m pytest
 ASSIGNMENT = ./assignments
-
+ 
 .PHONY: all
 all: check-style check-type run-test-coverage clean
 	@echo "All checks passed"
