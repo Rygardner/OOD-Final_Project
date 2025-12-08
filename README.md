@@ -10,6 +10,7 @@
 | **GitHub Username** | Rygardner, Pdmurphy2                                       |
 | **Repository**      | https://github.com/Rygardner/OOD-Final_Project             |
 | **Project**         | Classic 2D Platformer                                      |
+| **Grades**          | self grade is a 106/100, see [here](https://github.com/Rygardner/OOD-Final_Project/tree/main/showcase-grades%20folder) for more info            |
 
 #
 ## Setting up to play
